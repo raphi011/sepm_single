@@ -1,14 +1,17 @@
+CREATE ALIAS IF NOT EXISTS FT_INIT FOR "org.h2.fulltext.FullText.init";
+CALL FT_INIT();
+
 -- Table: Customer
 CREATE TABLE Customer (
     CustomerId integer NOT NULL  PRIMARY KEY,
-    Name varchar(255) NOT NULL,
+    Name varchar NOT NULL,
     IsDeleted boolean NOT NULL
 );
 
 -- Table: Horse
 CREATE TABLE Horse (
     HorseId integer NOT NULL  PRIMARY KEY,
-    Name varchar(255) NOT NULL,
+    Name varchar NOT NULL,
     BirthDate date,
     Weight float,
     Height integer,
@@ -41,3 +44,6 @@ INSERT INTO Horse VALUES (4, 'Sambuca', parsedatetime('22-01-2014', 'dd-MM-yyyy'
 
 INSERT INTO Booking VALUES (1, parsedatetime('17-09-2012 18:47:52.69', 'dd-MM-yyyy hh:mm:ss.SS'), parsedatetime('18-09-2012 18:47:52.69', 'dd-MM-yyyy hh:mm:ss.SS'), 1, 1);
 INSERT INTO Booking VALUES (2, parsedatetime('02-05-2013 12:47:52.69', 'dd-MM-yyyy hh:mm:ss.SS'), parsedatetime('02-05-2013 15:47:52.69', 'dd-MM-yyyy hh:mm:ss.SS'), 3, 2);
+
+CALL FT_CREATE_INDEX('PUBLIC', 'CUSTOMER', 'NAME' );
+CALL FT_CREATE_INDEX('PUBLIC', 'HORSE', 'NAME,WEIGHT,HEIGHT');
