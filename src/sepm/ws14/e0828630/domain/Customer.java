@@ -1,17 +1,14 @@
 package sepm.ws14.e0828630.domain;
 
-public class Customer {
+public class Customer extends DomainObject {
 
-    private int customerId;
     private String name;
     private boolean isDeleted;
 
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public Customer(int id, String name, boolean isDeleted) {
+        this.id = id;
+        this.name = name;
+        this.isDeleted = isDeleted;
     }
 
     public String getName() {

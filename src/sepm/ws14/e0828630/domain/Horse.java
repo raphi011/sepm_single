@@ -2,9 +2,8 @@ package sepm.ws14.e0828630.domain;
 
 import java.util.Date;
 
-public class Horse {
+public class Horse extends DomainObject {
 
-    private int horseId;
     private String name;
     private Date birthDate;
     private double weight;
@@ -12,22 +11,14 @@ public class Horse {
     private Date created;
     private boolean isDeleted;
 
-    public Horse(boolean isDeleted, int horseId, String name, Date date, double weight, int height, Date created) {
+    public Horse(boolean isDeleted, int id, String name, Date date, double weight, int height, Date created) {
         this.isDeleted = isDeleted;
-        this.horseId = horseId;
+        this.id = id;
         this.name = name;
         this.birthDate = date;
         this.weight = weight;
         this.height = height;
         this.created = created;
-    }
-
-    public int getHorseId() {
-        return horseId;
-    }
-
-    public void setHorseId(int horseId) {
-        this.horseId = horseId;
     }
 
     public String getName() {

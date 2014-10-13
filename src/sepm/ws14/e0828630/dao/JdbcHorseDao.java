@@ -10,8 +10,17 @@ import java.util.List;
 public class JdbcHorseDao implements IDao<Horse> {
 
     @Override
-    public void create(Horse entity) {
+    public void create(Horse entity) throws SQLException {
+        Connection con = H2Connection.getConnection();
+        PreparedStatement s = con.prepareStatement("INSERT INTO Horse (Name,BirthDate,Weight,Height)" +
+                                                   "VALUES (?,?,?,?)");
 
+        s.setString(1, entity.getName());
+        s.setDate(2, new java.sql.Date(entity.getBirthDate().getTime()));
+        s.setDouble(3, entity.getWeight());
+        s.setInt(4, entity.getHeight());
+
+        s.executeUpdate();
     }
 
     @Override
@@ -41,15 +50,13 @@ public class JdbcHorseDao implements IDao<Horse> {
     @Override
     public void update(Horse entity)  throws SQLException{
         Connection con = H2Connection.getConnection();
-        // todo: update birthdate as well
 
-        PreparedStatement s = con.prepareStatement("UPDATE Horse SET Name = ?, BirthDate = ?, Weight = ?, Height = ?, IsDeleted = ? WHERE HorseId = ?");
+        PreparedStatement s = con.prepareStatement("UPDATE Horse SET Name = ?, BirthDate = ?, Weight = ?, Height = ? WHERE HorseId = ?");
         s.setString(1, entity.getName());
         s.setDate(2, new java.sql.Date(entity.getBirthDate().getTime()));
         s.setDouble(3, entity.getWeight());
         s.setInt(4, entity.getHeight());
-        s.setBoolean(5, entity.isDeleted());
-        s.setInt(6, entity.getHorseId());
+        s.setInt(5, entity.getId());
 
         s.executeUpdate();
     }
@@ -59,7 +66,7 @@ public class JdbcHorseDao implements IDao<Horse> {
         Connection con = H2Connection.getConnection();
         Statement s = con.createStatement();
 
-        s.executeUpdate("DELETE FROM Horse WHERE HorseId = " + entity.getHorseId());
+        s.executeUpdate("UPDATE Horse SET IsDeleted = true WHERE HorseId = " + entity.getId());
     }
 
     @Override
