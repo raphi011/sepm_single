@@ -11,6 +11,13 @@ public class Booking extends DomainObject {
     private int horseId;
     private int customerId;
 
+    public Booking(Date from, Date to, int horseId, int customerId) {
+        this.from = from;
+        this.to = to;
+        this.horseId = horseId;
+        this.customerId = customerId;
+    }
+
     public Booking(int id, Date from, Date to, int horseId, int customerId, Date created, Date lastChanged) {
         this.id = id;
         this.from = from;

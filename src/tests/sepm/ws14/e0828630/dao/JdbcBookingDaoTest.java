@@ -15,9 +15,9 @@ public class JdbcBookingDaoTest extends AbstractJdbcBookingDaoTest {
 
         con = H2ConnectionFactory.getConnection();
 
-        JdbcBookingDao bookingDao = new JdbcBookingDao(con);
-
-        setBookingDao(bookingDao);
+        setHorseDao(new JdbcHorseDao(con));
+        setCustomerDao(new JdbcCustomerDao(con));
+        setBookingDao(new JdbcBookingDao(con));
 
         con.setAutoCommit(false);
     }

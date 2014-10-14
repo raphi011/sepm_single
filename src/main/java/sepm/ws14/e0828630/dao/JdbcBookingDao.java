@@ -22,7 +22,7 @@ public class JdbcBookingDao implements IDao<Booking> {
         if (entity == null)
             throw new IllegalArgumentException();
 
-        PreparedStatement s = con.prepareStatement("INSERT INTO Booking (From,To,HorseId,CustomerId)" +
+        PreparedStatement s = con.prepareStatement("INSERT INTO Booking (\"From\",\"To\",Horse_HorseId,Customer_CustomerId) " +
                 "VALUES (?,?,?,?)");
 
         s.setDate(1,new java.sql.Date(entity.getFrom().getTime()));
@@ -43,7 +43,7 @@ public class JdbcBookingDao implements IDao<Booking> {
     public Booking read(int id) throws SQLException {
         Statement s = con.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT From, To, Created, LastChanged, Horse_HorseId, "
+        ResultSet rs = s.executeQuery("SELECT \"From\", \"To\", Created, LastChanged, Horse_HorseId, "
                 + "Customer_CustomerId FROM Booking WHERE BookingId= " + id);
 
         if (!rs.next())
@@ -65,7 +65,7 @@ public class JdbcBookingDao implements IDao<Booking> {
     @Override
     public void update(Booking entity)  throws SQLException{
 
-        PreparedStatement s = con.prepareStatement("UPDATE Booking SET From = ?, To = ?, LastChanged = ?, Horse_HorseId = ?, Customer_CustomerId = ? WHERE BookingId = ?");
+        PreparedStatement s = con.prepareStatement("UPDATE Booking SET \"From\" = ?, \"To\" = ?, LastChanged = ?, Horse_HorseId = ?, Customer_CustomerId = ? WHERE BookingId = ?");
         s.setDate(1, new java.sql.Date(entity.getFrom().getTime()));
         s.setDate(2, new java.sql.Date(entity.getTo().getTime()));
         s.setDate(3, new java.sql.Date(new java.util.Date().getTime()));

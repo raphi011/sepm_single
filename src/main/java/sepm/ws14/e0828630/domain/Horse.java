@@ -11,6 +11,13 @@ public class Horse extends DomainObject {
     private Date created;
     private boolean isDeleted;
 
+    public Horse(String name, Date birthDate, double weight, int height) {
+        this.name = name;
+        this.birthDate = birthDate;
+        this.weight = weight;
+        this.height = height;
+    }
+
     public Horse(boolean isDeleted, int id, String name, Date date, double weight, int height, Date created) {
         this.isDeleted = isDeleted;
         this.id = id;
