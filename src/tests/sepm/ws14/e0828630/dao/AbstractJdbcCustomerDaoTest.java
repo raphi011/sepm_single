@@ -16,12 +16,12 @@ public abstract class AbstractJdbcCustomerDaoTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createWithNullShouldThrowException() throws SQLException{
+    public void createWithNullShouldThrowException() throws DAOException {
         customerDao.create(null);
     }
 
     @Test
-    public void createNew() throws SQLException {
+    public void createNew() throws DAOException {
         Customer c = new Customer("Raphi");
 
         customerDao.create(c);
@@ -34,7 +34,7 @@ public abstract class AbstractJdbcCustomerDaoTest {
     }
 
     @Test
-    public void delete() throws SQLException {
+    public void delete() throws DAOException {
         Customer c = new Customer("Raphi");
 
         customerDao.create(c);
@@ -43,7 +43,7 @@ public abstract class AbstractJdbcCustomerDaoTest {
     }
 
     @Test
-    public void update() throws SQLException {
+    public void update() throws DAOException {
         Customer c = new Customer("Raphi");
 
         customerDao.create(c);
@@ -55,7 +55,7 @@ public abstract class AbstractJdbcCustomerDaoTest {
     }
 
     @Test
-    public void search() throws SQLException {
+    public void search() throws DAOException {
         Customer c = new Customer("Raphael Gruber");
 
         customerDao.create(c);

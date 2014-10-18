@@ -1,24 +1,24 @@
 package sepm.ws14.e0828630.domain;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class Booking extends DomainObject {
 
-    private Date from;
-    private Date to;
-    private Date created;
-    private Date lastChanged;
+    private DateTime from;
+    private DateTime to;
+    private DateTime created;
+    private DateTime lastChanged;
     private int horseId;
     private int customerId;
 
-    public Booking(Date from, Date to, int horseId, int customerId) {
+    public Booking(DateTime from, DateTime to, int horseId, int customerId) {
         this.from = from;
         this.to = to;
         this.horseId = horseId;
         this.customerId = customerId;
     }
 
-    public Booking(int id, Date from, Date to, int horseId, int customerId, Date created, Date lastChanged) {
+    public Booking(int id, DateTime from, DateTime to, int horseId, int customerId, DateTime created, DateTime lastChanged) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -28,19 +28,19 @@ public class Booking extends DomainObject {
         this.lastChanged = lastChanged;
     }
 
-    public Date getCreated() {
+    public DateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(DateTime created) {
         this.created = created;
     }
 
-    public Date getLastChanged() {
+    public DateTime getLastChanged() {
         return lastChanged;
     }
 
-    public void setLastChanged(Date lastChanged) {
+    public void setLastChanged(DateTime lastChanged) {
         this.lastChanged = lastChanged;
     }
 
@@ -52,19 +52,19 @@ public class Booking extends DomainObject {
         this.customerId = customerId;
     }
 
-    public Date getFrom() {
+    public DateTime getFrom() {
         return from;
     }
 
-    public void setFrom(Date from) {
+    public void setFrom(DateTime from) {
         this.from = from;
     }
 
-    public Date getTo() {
+    public DateTime getTo() {
         return to;
     }
 
-    public void setTo(Date to) {
+    public void setTo(DateTime to) {
         this.to = to;
     }
 

@@ -1,5 +1,6 @@
 package sepm.ws14.e0828630.dao;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import sepm.ws14.e0828630.domain.Horse;
 
@@ -19,13 +20,13 @@ public abstract class AbstractJdbcHorseDaoTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createWithNullShouldThrowException() throws SQLException{
+    public void createWithNullShouldThrowException() throws DAOException {
         horseDao.create(null);
     }
 
     @Test // test
-    public void createNew() throws SQLException {
-        Horse h = new Horse("Abel",new Date(), 133, 180);
+    public void createNew() throws DAOException {
+        Horse h = new Horse("Abel", DateTime.now(), 133, 180);
 
         horseDao.create(h);
 
@@ -37,8 +38,8 @@ public abstract class AbstractJdbcHorseDaoTest {
     }
 
     @Test
-    public void delete() throws SQLException {
-        Horse h = new Horse("Abel",new Date(), 133, 180);
+    public void delete() throws DAOException {
+        Horse h = new Horse("Abel",DateTime.now(), 133, 180);
 
         horseDao.create(h);
         horseDao.delete(h);
@@ -46,8 +47,8 @@ public abstract class AbstractJdbcHorseDaoTest {
     }
 
     @Test
-    public void update() throws SQLException {
-        Horse h = new Horse("Abel",new Date(), 133, 180);
+    public void update() throws DAOException {
+        Horse h = new Horse("Abel",DateTime.now(), 133, 180);
 
         horseDao.create(h);
         h.setName("Trudel");
@@ -58,8 +59,8 @@ public abstract class AbstractJdbcHorseDaoTest {
     }
 
     @Test
-    public void search() throws SQLException {
-        Horse h = new Horse("Abel",new Date(), 133, 180);
+    public void search() throws DAOException {
+        Horse h = new Horse("Abel",DateTime.now(), 133, 180);
 
         horseDao.create(h);
 

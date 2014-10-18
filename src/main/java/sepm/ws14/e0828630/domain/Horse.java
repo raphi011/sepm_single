@@ -1,24 +1,24 @@
 package sepm.ws14.e0828630.domain;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class Horse extends DomainObject {
 
     private String name;
-    private Date birthDate;
+    private DateTime birthDate;
     private double weight;
     private int height;
-    private Date created;
+    private DateTime created;
     private boolean isDeleted;
 
-    public Horse(String name, Date birthDate, double weight, int height) {
+    public Horse(String name, DateTime birthDate, double weight, int height) {
         this.name = name;
         this.birthDate = birthDate;
         this.weight = weight;
         this.height = height;
     }
 
-    public Horse(boolean isDeleted, int id, String name, Date date, double weight, int height, Date created) {
+    public Horse(boolean isDeleted, int id, String name, DateTime date, double weight, int height, DateTime created) {
         this.isDeleted = isDeleted;
         this.id = id;
         this.name = name;
@@ -36,11 +36,11 @@ public class Horse extends DomainObject {
         this.name = name;
     }
 
-    public Date getBirthDate() {
+    public DateTime getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date date) {
+    public void setBirthDate(DateTime date) {
         this.birthDate = date;
     }
 
@@ -60,11 +60,11 @@ public class Horse extends DomainObject {
         this.height = height;
     }
 
-    public Date getCreated() {
+    public DateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(DateTime created) {
         this.created = created;
     }
 

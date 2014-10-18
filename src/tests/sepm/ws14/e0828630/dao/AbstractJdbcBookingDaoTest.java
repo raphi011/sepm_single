@@ -1,5 +1,6 @@
 package sepm.ws14.e0828630.dao;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import sepm.ws14.e0828630.domain.Booking;
 import sepm.ws14.e0828630.domain.Customer;
@@ -31,19 +32,19 @@ public abstract class AbstractJdbcBookingDaoTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void createWithNullShouldThrowException() throws SQLException{
+    public void createWithNullShouldThrowException() throws DAOException{
         bookingDao.create(null);
     }
 
     @Test
-    public void createNew() throws SQLException {
-        Horse h = new Horse("Abel",new Date(), 133, 180);
+    public void createNew() throws DAOException {
+        Horse h = new Horse("Abel",DateTime.now(), 133, 180);
         Customer c = new Customer("Raphi");
 
         horseDao.create(h);
         customerDao.create(c);
 
-        Booking b = new Booking(new Date(), new Date(), h.getId(), c.getId() );
+        Booking b = new Booking(DateTime.now(), DateTime.now(), h.getId(), c.getId() );
 
         bookingDao.create(b);
 

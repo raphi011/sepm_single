@@ -1,8 +1,6 @@
 package sepm.ws14.e0828630.dao;
 
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import sepm.ws14.e0828630.domain.Booking;
 
 import java.sql.*;
@@ -18,74 +16,88 @@ public class JdbcBookingDao implements IDao<Booking> {
         this.con = con;
     }
 
-    public void create(Booking entity) throws SQLException {
-        if (entity == null)
-            throw new IllegalArgumentException();
+    public void create(Booking entity) throws DAOException {
+        try {
+            if (entity == null)
+                throw new IllegalArgumentException();
 
-        PreparedStatement s = con.prepareStatement("INSERT INTO Booking (\"From\",\"To\",Horse_HorseId,Customer_CustomerId) " +
-                "VALUES (?,?,?,?)");
+            PreparedStatement s = con.prepareStatement("INSERT INTO Booking (\"From\",\"To\",Horse_HorseId,Customer_CustomerId) " +
+                    "VALUES (?,?,?,?)");
 
-        s.setDate(1,new java.sql.Date(entity.getFrom().getTime()));
-        s.setDate(2, new java.sql.Date(entity.getTo().getTime()));
-        s.setDouble(3, entity.getHorseId());
-        s.setInt(4, entity.getCustomerId());
+            s.setDate(1, new java.sql.Date(entity.getFrom().getMillis()));
+            s.setDate(2, new java.sql.Date(entity.getTo().getMillis()));
+            s.setDouble(3, entity.getHorseId());
+            s.setInt(4, entity.getCustomerId());
 
-        s.executeUpdate();
+            s.executeUpdate();
 
-        ResultSet rs = s.getGeneratedKeys();
-        if (!rs.next())
-            throw new SQLException("insert hasn't returned a primary key");
+            ResultSet rs = s.getGeneratedKeys();
+            if (!rs.next())
+                throw new SQLException("insert hasn't returned a primary key");
 
-        entity.setId(rs.getInt(1));
+            entity.setId(rs.getInt(1));
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 
     @Override
-    public Booking read(int id) throws SQLException {
-        Statement s = con.createStatement();
+    public Booking read(int id) throws DAOException {
 
-        ResultSet rs = s.executeQuery("SELECT \"From\", \"To\", Created, LastChanged, Horse_HorseId, "
-                + "Customer_CustomerId FROM Booking WHERE BookingId= " + id);
+        try {
+            Statement s = con.createStatement();
 
-        if (!rs.next())
-            return null;
 
-        Booking booking = new Booking(id,
-                rs.getDate("From"),
-                rs.getDate("To"),
-                rs.getInt("Horse_HorseId"),
-                rs.getInt("Customer_CustomerId"),
-                rs.getDate("Created"),
-                rs.getDate("LastChanged"));
+            ResultSet rs = s.executeQuery("SELECT \"From\", \"To\", Created, LastChanged, Horse_HorseId, "
+                    + "Customer_CustomerId FROM Booking WHERE BookingId= " + id);
 
-        s.close();
+            if (!rs.next())
+                return null;
 
-        return booking;
+            Booking booking = new Booking(id,
+                    new DateTime(rs.getDate("From").getTime()),
+                    new DateTime(rs.getDate("To").getTime()),
+                    rs.getInt("Horse_HorseId"),
+                    rs.getInt("Customer_CustomerId"),
+                    new DateTime(rs.getDate("Created")),
+                    new DateTime(rs.getDate("LastChanged")));
+
+            s.close();
+
+            return booking;
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 
     @Override
-    public void update(Booking entity)  throws SQLException{
+    public void update(Booking entity)  throws DAOException{
 
-        PreparedStatement s = con.prepareStatement("UPDATE Booking SET \"From\" = ?, \"To\" = ?, LastChanged = ?, Horse_HorseId = ?, Customer_CustomerId = ? WHERE BookingId = ?");
-        s.setDate(1, new java.sql.Date(entity.getFrom().getTime()));
-        s.setDate(2, new java.sql.Date(entity.getTo().getTime()));
-        s.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
-        s.setInt(4, entity.getHorseId());
-        s.setInt(5, entity.getCustomerId());
-        s.setInt(6, entity.getId());
+        try {
+            PreparedStatement s = con.prepareStatement("UPDATE Booking SET \"From\" = ?, \"To\" = ?, LastChanged = ?, Horse_HorseId = ?, Customer_CustomerId = ? WHERE BookingId = ?");
+            s.setDate(1, new java.sql.Date(entity.getFrom().getMillis()));
+            s.setDate(2, new java.sql.Date(entity.getTo().getMillis()));
+            s.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
+            s.setInt(4, entity.getHorseId());
+            s.setInt(5, entity.getCustomerId());
+            s.setInt(6, entity.getId());
 
-        s.executeUpdate();
+            s.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 
     @Override
-    public void delete(Booking entity)  throws SQLException{
-        throw new SQLException("Deleting Bookings is not allowed");
+    public void delete(Booking entity)  throws DAOException{
+        throw new DAOException("Deleting Bookings is not allowed");
 //        Statement s = con.createStatement();
 //
 //        s.executeUpdate("DELETE Booking WHERE BookingId = " + entity.getId());
     }
 
     @Override
-    public List<Booking> search(String query)  throws SQLException{
+    public List<Booking> search(String query)  throws DAOException{
         // todo
 //        ResultSet rs = FullText.searchData(con, query, 0, 0);
 //
