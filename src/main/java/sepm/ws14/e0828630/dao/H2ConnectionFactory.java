@@ -13,7 +13,6 @@ public class H2ConnectionFactory {
     public static final String PASSWORD = "";
     public static final String DRIVER_CLASS = "org.h2.Driver";
 
-    //private constructor
     private H2ConnectionFactory() {
         try {
             Class.forName(DRIVER_CLASS);

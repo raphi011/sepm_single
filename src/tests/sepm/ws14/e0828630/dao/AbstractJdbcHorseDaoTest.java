@@ -23,7 +23,7 @@ public abstract class AbstractJdbcHorseDaoTest {
         horseDao.create(null);
     }
 
-    @Test
+    @Test // test
     public void createNew() throws SQLException {
         Horse h = new Horse("Abel",new Date(), 133, 180);
 
