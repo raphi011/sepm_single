@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.fulltext.FullText;
 import org.joda.time.DateTime;
+import sepm.ws14.e0828630.domain.Booking;
 import sepm.ws14.e0828630.domain.Horse;
 
 import java.sql.*;
@@ -119,6 +120,27 @@ public class JdbcHorseDao implements IDao<Horse> {
 
             rs.close();
             return results;
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    @Override
+    public List<Horse> readAll() throws DAOException {
+        try {
+            Statement s = con.createStatement();
+
+            ResultSet rs = s.executeQuery("SELECT HorseId FROM Horse");
+
+            ArrayList<Horse> list = new ArrayList<Horse>();
+
+            while (rs.next()) {
+                list.add(read(rs.getInt("HorseId")));
+            }
+
+            s.close();
+
+            return list;
         } catch (SQLException e) {
             throw new DAOException(e);
         }

@@ -43,23 +43,23 @@ public class JdbcCustomerDao implements IDao<Customer> {
     @Override
     public Customer read(int id) throws DAOException {
         try {
-        Statement s = con.createStatement();
+            Statement s = con.createStatement();
 
-        ResultSet rs = s.executeQuery("SELECT Name, IsDeleted FROM Customer WHERE IsDeleted = FALSE and CustomerId = " + id);
+            ResultSet rs = s.executeQuery("SELECT Name, IsDeleted FROM Customer WHERE IsDeleted = FALSE and CustomerId = " + id);
 
-        if (!rs.next())
-            return null;
+            if (!rs.next())
+                return null;
 
-        Customer customer = new Customer(id,
-                rs.getString("Name"),
-                rs.getBoolean("IsDeleted"));
+            Customer customer = new Customer(id,
+                    rs.getString("Name"),
+                    rs.getBoolean("IsDeleted"));
 
-        s.close();
+            s.close();
 
-        return customer;
-    } catch (SQLException e) {
-        throw new DAOException(e);
-    }
+            return customer;
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 
     @Override
@@ -105,6 +105,27 @@ public class JdbcCustomerDao implements IDao<Customer> {
 
             rs.close();
             return results;
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    @Override
+    public List<Customer> readAll() throws DAOException {
+        try {
+            Statement s = con.createStatement();
+
+            ResultSet rs = s.executeQuery("SELECT CustomerId FROM Customer");
+
+            ArrayList<Customer> list = new ArrayList<Customer>();
+
+            while (rs.next()) {
+                list.add(read(rs.getInt("CustomerId")));
+            }
+
+            s.close();
+
+            return list;
         } catch (SQLException e) {
             throw new DAOException(e);
         }

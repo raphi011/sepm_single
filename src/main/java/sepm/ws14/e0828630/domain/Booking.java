@@ -1,6 +1,7 @@
 package sepm.ws14.e0828630.domain;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 public class Booking extends DomainObject {
 
@@ -74,5 +75,9 @@ public class Booking extends DomainObject {
 
     public void setHorseId(int horseId) {
         this.horseId = horseId;
+    }
+
+    public boolean isEditable() {
+        return Days.daysBetween(DateTime.now(), from ).getDays() > 14;
     }
 }

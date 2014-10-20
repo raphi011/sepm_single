@@ -10,5 +10,5 @@ public interface IDao<T> {
     void update(T entity) throws DAOException;
     void delete(T entity) throws DAOException;
     List<T> search(String query) throws DAOException;
-
+    List<T> readAll() throws DAOException;
 }

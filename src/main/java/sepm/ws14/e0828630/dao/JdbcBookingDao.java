@@ -2,6 +2,7 @@ package sepm.ws14.e0828630.dao;
 
 import org.joda.time.DateTime;
 import sepm.ws14.e0828630.domain.Booking;
+import sepm.ws14.e0828630.domain.Customer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class JdbcBookingDao implements IDao<Booking> {
             PreparedStatement s = con.prepareStatement("UPDATE Booking SET \"From\" = ?, \"To\" = ?, LastChanged = ?, Horse_HorseId = ?, Customer_CustomerId = ? WHERE BookingId = ?");
             s.setDate(1, new java.sql.Date(entity.getFrom().getMillis()));
             s.setDate(2, new java.sql.Date(entity.getTo().getMillis()));
-            s.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
+            s.setDate(3, new java.sql.Date(DateTime.now().getMillis()));
             s.setInt(4, entity.getHorseId());
             s.setInt(5, entity.getCustomerId());
             s.setInt(6, entity.getId());
@@ -90,18 +91,23 @@ public class JdbcBookingDao implements IDao<Booking> {
 
     @Override
     public void delete(Booking entity)  throws DAOException{
-        throw new DAOException("Deleting Bookings is not allowed");
-//        Statement s = con.createStatement();
-//
-//        s.executeUpdate("DELETE Booking WHERE BookingId = " + entity.getId());
+        try {
+            Statement s = con.createStatement();
+
+            s.executeUpdate("DELETE FROM Booking WHERE BookingId = " + entity.getId());
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 
     @Override
     public List<Booking> search(String query)  throws DAOException{
         // todo
+
+        throw new DAOException("Booking search not implemented yet");
 //        ResultSet rs = FullText.searchData(con, query, 0, 0);
 //
-          ArrayList<Booking> results = new ArrayList<Booking>();
+//        ArrayList<Booking> results = new ArrayList<Booking>();
 //
 //        while (rs.next()) {
 //            if (rs.getString("TABLE").equals("")) {
@@ -113,6 +119,27 @@ public class JdbcBookingDao implements IDao<Booking> {
 //        }
 //
 //        rs.close();
-        return results;
+        //return results;
+    }
+
+    @Override
+    public List<Booking> readAll() throws DAOException {
+        try {
+            Statement s = con.createStatement();
+
+            ResultSet rs = s.executeQuery("SELECT BookingId FROM Booking");
+
+            ArrayList<Booking> list = new ArrayList<Booking>();
+
+            while (rs.next()) {
+                list.add(read(rs.getInt("BookingId")));
+            }
+
+            s.close();
+
+            return list;
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 }
