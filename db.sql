@@ -20,7 +20,6 @@ CREATE TABLE Horse (
     IsDeleted boolean NOT NULL DEFAULT false
 );
 
--- tables
 -- Table: Booking
 CREATE TABLE Booking (
     BookingId integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -28,6 +27,7 @@ CREATE TABLE Booking (
     "To" datetime NOT NULL,
     Created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     LastChanged datetime,
+    IsCanceled boolean NOT NULL DEFAULT false,
     Horse_HorseId integer NOT NULL,
     Customer_CustomerId integer NOT NULL,
     FOREIGN KEY (Horse_HorseId) REFERENCES Horse (HorseId),

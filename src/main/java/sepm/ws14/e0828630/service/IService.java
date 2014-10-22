@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface IService<T extends DomainObject> {
 
-
-
     void create(T entity) throws ServiceException;
     void change(T entity) throws ServiceException;
     void delete(T entity) throws ServiceException;

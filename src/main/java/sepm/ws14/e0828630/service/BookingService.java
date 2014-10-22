@@ -1,12 +1,9 @@
 package sepm.ws14.e0828630.service;
 
-import sepm.ws14.e0828630.dao.DAOException;
 import sepm.ws14.e0828630.dao.H2ConnectionFactory;
-import sepm.ws14.e0828630.dao.IDao;
 import sepm.ws14.e0828630.dao.JdbcBookingDao;
 import sepm.ws14.e0828630.domain.Booking;
 
-import javax.xml.ws.Service;
 import java.sql.SQLException;
 import java.util.List;
 

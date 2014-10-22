@@ -1,5 +1,6 @@
 package sepm.ws14.e0828630.dao;
 
+import javafx.scene.image.Image;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.h2.fulltext.FullText;
@@ -7,8 +8,15 @@ import org.joda.time.DateTime;
 import sepm.ws14.e0828630.domain.Booking;
 import sepm.ws14.e0828630.domain.Horse;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class JdbcHorseDao implements IDao<Horse> {
@@ -27,13 +35,14 @@ public class JdbcHorseDao implements IDao<Horse> {
             if (entity == null)
                 throw new IllegalArgumentException();
 
-            PreparedStatement s = con.prepareStatement("INSERT INTO Horse (Name,BirthDate,Weight,Height)" +
+            PreparedStatement s = con.prepareStatement("INSERT INTO Horse (Name,BirthDate,Weight,Height, Image)" +
                     "VALUES (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
             s.setString(1, entity.getName());
             s.setDate(2, new java.sql.Date(entity.getBirthDate().getMillis()));
             s.setDouble(3, entity.getWeight());
             s.setInt(4, entity.getHeight());
+            s.setBlob(5, entity.getImage());
 
             s.executeUpdate();
 
@@ -53,18 +62,26 @@ public class JdbcHorseDao implements IDao<Horse> {
             Statement s = con.createStatement();
 
             ResultSet rs = s.executeQuery("SELECT HorseId, Name, BirthDate, Weight, Height, "
-                    + "Image, Created, IsDeleted FROM Horse WHERE IsDeleted = FALSE and HorseId = " + id);
+                    + "Image, Created, IsDeleted, Image FROM Horse WHERE IsDeleted = FALSE and HorseId = " + id);
 
             if (!rs.next())
                 return null;
 
-            Horse horse = new Horse(rs.getBoolean("IsDeleted"),
-                    rs.getInt("HorseId"),
-                    rs.getString("Name"),
-                    new DateTime(rs.getDate("BirthDate").getTime()),
-                    rs.getDouble("Weight"),
-                    rs.getInt("Height"),
-                    new DateTime(rs.getDate("Created").getTime()));
+            Horse horse = new Horse();
+            horse.setDeleted(rs.getBoolean("IsDeleted"));
+            horse.setId(rs.getInt("HorseId"));
+            horse.setName(rs.getString("Name"));
+            horse.setBirthDate(new DateTime(rs.getDate("BirthDate").getTime()));
+            horse.setWeight(rs.getDouble("Weight"));
+            horse.setHeight(rs.getInt("Height"));
+            horse.setCreated(new DateTime(rs.getDate("Created").getTime()));
+
+            Blob imageBlob = rs.getBlob("Image");
+
+
+            if (imageBlob != null) {
+                horse.setImage(imageBlob.getBinaryStream());
+            }
 
             s.close();
 
@@ -77,15 +94,20 @@ public class JdbcHorseDao implements IDao<Horse> {
     @Override
     public void update(Horse entity)  throws DAOException{
 
+
+
         try {
-            PreparedStatement s = con.prepareStatement("UPDATE Horse SET Name = ?, BirthDate = ?, Weight = ?, Height = ? WHERE HorseId = ?");
+            PreparedStatement s = con.prepareStatement("UPDATE Horse SET Name = ?, BirthDate = ?, Weight = ?, Height = ?, Image = ? WHERE HorseId = ?");
+
             s.setString(1, entity.getName());
             s.setDate(2, new java.sql.Date(entity.getBirthDate().getMillis()));
             s.setDouble(3, entity.getWeight());
             s.setInt(4, entity.getHeight());
-            s.setInt(5, entity.getId());
 
-            s.executeUpdate();
+            s.setBinaryStream(5, entity.getImage());
+            s.setInt(6, entity.getId());
+
+            s.execute();
         } catch (SQLException e) {
             throw new DAOException(e);
         }

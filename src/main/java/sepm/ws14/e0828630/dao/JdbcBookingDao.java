@@ -50,7 +50,7 @@ public class JdbcBookingDao implements IDao<Booking> {
 
 
             ResultSet rs = s.executeQuery("SELECT \"From\", \"To\", Created, LastChanged, Horse_HorseId, "
-                    + "Customer_CustomerId FROM Booking WHERE BookingId= " + id);
+                    + "Customer_CustomerId, IsCanceled FROM Booking WHERE BookingId= " + id);
 
             if (!rs.next())
                 return null;
@@ -61,7 +61,8 @@ public class JdbcBookingDao implements IDao<Booking> {
                     rs.getInt("Horse_HorseId"),
                     rs.getInt("Customer_CustomerId"),
                     new DateTime(rs.getDate("Created")),
-                    new DateTime(rs.getDate("LastChanged")));
+                    new DateTime(rs.getDate("LastChanged")),
+                    rs.getBoolean("IsCanceled"));
 
             s.close();
 
@@ -75,13 +76,14 @@ public class JdbcBookingDao implements IDao<Booking> {
     public void update(Booking entity)  throws DAOException{
 
         try {
-            PreparedStatement s = con.prepareStatement("UPDATE Booking SET \"From\" = ?, \"To\" = ?, LastChanged = ?, Horse_HorseId = ?, Customer_CustomerId = ? WHERE BookingId = ?");
+            PreparedStatement s = con.prepareStatement("UPDATE Booking SET \"From\" = ?, \"To\" = ?, LastChanged = ?, Horse_HorseId = ?, Customer_CustomerId = ?, IsCanceled = ? WHERE BookingId = ?");
             s.setDate(1, new java.sql.Date(entity.getFrom().getMillis()));
             s.setDate(2, new java.sql.Date(entity.getTo().getMillis()));
             s.setDate(3, new java.sql.Date(DateTime.now().getMillis()));
             s.setInt(4, entity.getHorseId());
             s.setInt(5, entity.getCustomerId());
-            s.setInt(6, entity.getId());
+            s.setBoolean(6, entity.isCanceled());
+            s.setInt(7, entity.getId());
 
             s.executeUpdate();
         } catch (SQLException e) {

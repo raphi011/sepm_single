@@ -54,6 +54,4 @@ public abstract class AbstractService<T extends DomainObject> implements IServic
             throw new ServiceException(e);
         }
     }
-
-
 }

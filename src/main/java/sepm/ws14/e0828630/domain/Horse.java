@@ -2,6 +2,9 @@ package sepm.ws14.e0828630.domain;
 
 import org.joda.time.DateTime;
 
+import java.io.InputStream;
+import java.util.stream.Stream;
+
 public class Horse extends DomainObject {
 
     private String name;
@@ -10,6 +13,11 @@ public class Horse extends DomainObject {
     private int height;
     private DateTime created;
     private boolean isDeleted;
+    private InputStream image;
+
+    public Horse() {
+
+    }
 
     public Horse(String name, DateTime birthDate, double weight, int height) {
         this.name = name;
@@ -74,5 +82,18 @@ public class Horse extends DomainObject {
 
     public void setDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public InputStream getImage() {
+        return image;
+    }
+
+    public void setImage(InputStream image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

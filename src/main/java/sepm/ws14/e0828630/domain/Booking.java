@@ -11,6 +11,8 @@ public class Booking extends DomainObject {
     private DateTime lastChanged;
     private int horseId;
     private int customerId;
+    private boolean isCanceled;
+
 
     public Booking(DateTime from, DateTime to, int horseId, int customerId) {
         this.from = from;
@@ -19,7 +21,7 @@ public class Booking extends DomainObject {
         this.customerId = customerId;
     }
 
-    public Booking(int id, DateTime from, DateTime to, int horseId, int customerId, DateTime created, DateTime lastChanged) {
+    public Booking(int id, DateTime from, DateTime to, int horseId, int customerId, DateTime created, DateTime lastChanged, boolean isCanceled) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -27,6 +29,15 @@ public class Booking extends DomainObject {
         this.customerId = customerId;
         this.created = created;
         this.lastChanged = lastChanged;
+        this.isCanceled = isCanceled;
+    }
+
+    public boolean isCanceled() {
+        return isCanceled;
+    }
+
+    public void setCanceled(boolean isCanceled) {
+        this.isCanceled = isCanceled;
     }
 
     public DateTime getCreated() {
@@ -78,6 +89,6 @@ public class Booking extends DomainObject {
     }
 
     public boolean isEditable() {
-        return Days.daysBetween(DateTime.now(), from ).getDays() > 14;
+        return Days.daysBetween(DateTime.now(), from ).getDays() > 14 && !isCanceled;
     }
 }
