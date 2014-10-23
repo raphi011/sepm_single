@@ -1,5 +1,8 @@
 package sepm.ws14.e0828630.gui;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -13,13 +16,14 @@ import sepm.ws14.e0828630.dao.DAOException;
 import sepm.ws14.e0828630.dao.H2ConnectionFactory;
 import sepm.ws14.e0828630.dao.JdbcHorseDao;
 import sepm.ws14.e0828630.domain.Horse;
+import sepm.ws14.e0828630.service.Service;
+import sepm.ws14.e0828630.service.ServiceException;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class HorseViewController extends AbstractController {
 
@@ -44,20 +48,14 @@ public class HorseViewController extends AbstractController {
     @FXML
     private ImageView imageView;
 
-    private Map<Horse, Image> horseImages;
-
     public HorseViewController() {
-        horseImages = new HashMap<Horse, Image>();
     }
 
     @FXML
     private void initialize() {
         horseList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showHorseDetails(newValue));
-
-
     }
-
 
     private void showHorseDetails(Horse horse) {
 
@@ -69,11 +67,14 @@ public class HorseViewController extends AbstractController {
             heightLabel.setText(Integer.toString(horse.getHeight()));
             createdLabel.setText(horse.getCreated().toString(DateTimeFormat.forPattern("MM.dd.yyyy mm:hh")));
 
-            if (horseImages.containsKey(horse)) {
-                imageView.setImage(horseImages.get(horse));
-            } else {
-                imageView.setImage(null);
+            Image img = null;
+
+            if (horse.getImage() != null) {
+                img = new Image(new ByteArrayInputStream(horse.getImage()));
             }
+
+            imageView.setImage(img);
+
         } else {
             nameLabel.setText("");
             birthdateLabel.setText("");
@@ -92,24 +93,44 @@ public class HorseViewController extends AbstractController {
 
         if (f != null) {
             try {
-FileInputStream fileStream = new FileInputStream(f);
+                byte[] bytes = Files.readAllBytes(Paths.get(f.getPath()));
 
-Horse h = getSelectedHorse();
-h.setImage(fileStream);
-Connection c = H2ConnectionFactory.getConnection();
-JdbcHorseDao horseDao = new JdbcHorseDao(c);
-horseDao.update(h);
-c.commit();
+                Horse h = getSelectedHorse();
+                h.setImage(bytes);
 
 
-Image img = new Image(fileStream);
-horseImages.put(h, img);
-imageView.setImage(img);
+
+                Connection c = H2ConnectionFactory.getConnection();
+                JdbcHorseDao horseDao = new JdbcHorseDao(c);
+                horseDao.update(h);
+                c.commit();
+
+                Image img = new Image(new ByteArrayInputStream(bytes));
+                imageView.setImage(img);
 
             } catch (FileNotFoundException e) {
 
             }
         }
+    }
+
+    @FXML
+    private void deleteHorse() {
+        Horse h = getSelectedHorse();
+
+        if (h == null)
+            return;
+
+        try {
+            service.deleteHorse(h);
+        } catch (ServiceException e) {
+            handleServiceException(e);
+        }
+    }
+
+    private void handleServiceException(ServiceException e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, e.getCause().getMessage());
+        // todo: log
     }
 
     private Horse getSelectedHorse() {
@@ -131,15 +152,15 @@ imageView.setImage(img);
         }
     }
 
-    public void setMainApplication(MainApplication mainApplication) {
-        super.setMainApplication(mainApplication);
+    @Override
+    public void setService(Service service) {
+        super.setService(service);
 
-        horseList.setItems(mainApplication.getHorseData());
+       ObservableList list = FXCollections.observableList(service.getHorseList());
 
-        for (Horse h : horseList.getItems()) {
-            if (h.getImage() != null) {
-                horseImages.put(h, new Image(h.getImage()));
-            }
-        }
+        FilteredList<Horse> f = new FilteredList<Horse>(list, p -> true);
+
+        horseList.setItems(f);
     }
+
 }

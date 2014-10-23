@@ -21,12 +21,15 @@ public class H2ConnectionFactory {
         }
     }
 
-    private Connection createConnection() throws SQLException {
-
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+    private Connection createConnection() throws DAOException {
+        try {
+            return DriverManager.getConnection(URL, USER, PASSWORD);
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 
-    public static Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws DAOException {
         return instance.createConnection();
     }
 }

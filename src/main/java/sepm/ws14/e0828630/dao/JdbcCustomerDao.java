@@ -1,7 +1,5 @@
 package sepm.ws14.e0828630.dao;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.h2.fulltext.FullText;
 import sepm.ws14.e0828630.domain.Customer;
 

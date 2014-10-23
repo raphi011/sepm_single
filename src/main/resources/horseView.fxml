@@ -51,7 +51,7 @@
                                 <HBox nodeOrientation="RIGHT_TO_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="7">
                                     <children>
                                         <Button layoutX="366.0" layoutY="330.0" mnemonicParsing="false" text="Edit" />
-                                        <Button layoutX="250.0" layoutY="330.0" mnemonicParsing="false" onAction="#handleDeletePerson" text="Delete" textFill="#c33131" />
+                                        <Button layoutX="250.0" layoutY="330.0" mnemonicParsing="false" onAction="#deleteHorse" text="Delete" textFill="#c33131" />
                               <Button mnemonicParsing="false" onAction="#handleSetPicture" text="Picture" />
                                     </children>
                                 </HBox>

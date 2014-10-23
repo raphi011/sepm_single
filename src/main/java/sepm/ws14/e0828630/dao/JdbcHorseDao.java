@@ -8,10 +8,7 @@ import org.joda.time.DateTime;
 import sepm.ws14.e0828630.domain.Booking;
 import sepm.ws14.e0828630.domain.Horse;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
@@ -42,7 +39,7 @@ public class JdbcHorseDao implements IDao<Horse> {
             s.setDate(2, new java.sql.Date(entity.getBirthDate().getMillis()));
             s.setDouble(3, entity.getWeight());
             s.setInt(4, entity.getHeight());
-            s.setBlob(5, entity.getImage());
+            s.setBlob(5, new ByteArrayInputStream(entity.getImage()));
 
             s.executeUpdate();
 
@@ -78,9 +75,8 @@ public class JdbcHorseDao implements IDao<Horse> {
 
             Blob imageBlob = rs.getBlob("Image");
 
-
             if (imageBlob != null) {
-                horse.setImage(imageBlob.getBinaryStream());
+                horse.setImage(imageBlob.getBytes(0, (int) imageBlob.length()));
             }
 
             s.close();
@@ -94,8 +90,6 @@ public class JdbcHorseDao implements IDao<Horse> {
     @Override
     public void update(Horse entity)  throws DAOException{
 
-
-
         try {
             PreparedStatement s = con.prepareStatement("UPDATE Horse SET Name = ?, BirthDate = ?, Weight = ?, Height = ?, Image = ? WHERE HorseId = ?");
 
@@ -103,8 +97,7 @@ public class JdbcHorseDao implements IDao<Horse> {
             s.setDate(2, new java.sql.Date(entity.getBirthDate().getMillis()));
             s.setDouble(3, entity.getWeight());
             s.setInt(4, entity.getHeight());
-
-            s.setBinaryStream(5, entity.getImage());
+            s.setBinaryStream(5, new ByteArrayInputStream(entity.getImage()));
             s.setInt(6, entity.getId());
 
             s.execute();
@@ -152,7 +145,7 @@ public class JdbcHorseDao implements IDao<Horse> {
         try {
             Statement s = con.createStatement();
 
-            ResultSet rs = s.executeQuery("SELECT HorseId FROM Horse");
+            ResultSet rs = s.executeQuery("SELECT HorseId FROM Horse WHERE IsDeleted = false");
 
             ArrayList<Horse> list = new ArrayList<Horse>();
 

@@ -1,5 +1,6 @@
 package sepm.ws14.e0828630.dao;
 
+import org.h2.jdbc.JdbcConnection;
 import org.joda.time.DateTime;
 import sepm.ws14.e0828630.domain.Booking;
 import sepm.ws14.e0828630.domain.Customer;

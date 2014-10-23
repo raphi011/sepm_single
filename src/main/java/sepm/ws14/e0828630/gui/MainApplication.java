@@ -2,36 +2,26 @@ package sepm.ws14.e0828630.gui;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import sepm.ws14.e0828630.dao.DAOException;
-import sepm.ws14.e0828630.dao.H2ConnectionFactory;
-import sepm.ws14.e0828630.dao.JdbcHorseDao;
-import sepm.ws14.e0828630.domain.Horse;
+import sepm.ws14.e0828630.service.PersistanceType;
+import sepm.ws14.e0828630.service.Service;
+import sepm.ws14.e0828630.service.ServiceFactory;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainApplication extends Application {
 
-    private ObservableList<Horse> horseList = FXCollections.observableArrayList();
-
     private Stage primaryStage;
     private BorderPane mainLayout;
-
-    public ObservableList<Horse> getHorseData() {
-        return horseList;
-    }
+    private Service service;
 
     public Stage getPrimaryStage() {
         return primaryStage;
@@ -42,7 +32,19 @@ public class MainApplication extends Application {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Wendy's riding stable");
 
-        getData();
+
+        try {
+            service = ServiceFactory.createService(PersistanceType.H2);
+            service.getAllBookings();
+            service.getAllCustomers();
+            service.getAllHorses();
+        } catch (DAOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "An unexpected error occured while initiating the program, exiting.");
+            alert.showAndWait();
+            System.exit(1);
+        }
+
+
 
         initRootLayout();
 
@@ -65,20 +67,6 @@ public class MainApplication extends Application {
         }
     }
 
-    public void getData() {
-        try {
-
-            JdbcHorseDao horseDao = new JdbcHorseDao(H2ConnectionFactory.getConnection());
-            List<Horse> horses = horseDao.readAll();
-            horseList.addAll(horses);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch(DAOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     public void initTabs() throws Exception {
         TabPane tabPane = (TabPane)mainLayout.lookup("#tabPane");
 
@@ -93,6 +81,7 @@ public class MainApplication extends Application {
 
             AbstractController controller = loader.getController();
             controller.setMainApplication(this);
+            controller.setService(service);
         }
     }
 
