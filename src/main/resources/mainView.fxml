@@ -57,7 +57,7 @@
               </rowConstraints>
                <children>
                   <Label fx:id="searchHelpLabel" text="?" GridPane.columnIndex="2" />
-                  <TextField fx:id="searchTextField" onInputMethodTextChanged="#textChanged" prefHeight="26.0" prefWidth="501.0" GridPane.columnIndex="1" />
+                  <TextField fx:id="searchTextField" prefHeight="26.0" prefWidth="501.0" GridPane.columnIndex="1" />
                   <Label text="Search:">
                      <font>
                         <Font name="System Bold" size="13.0" />

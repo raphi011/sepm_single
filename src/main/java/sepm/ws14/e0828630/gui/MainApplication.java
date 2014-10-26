@@ -15,13 +15,17 @@ import sepm.ws14.e0828630.service.ServiceFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class MainApplication extends Application {
+public class MainApplication extends Application implements IQuery {
 
     private Stage primaryStage;
     private BorderPane mainLayout;
     private Service service;
+
+    private Map<Tab, AbstractController> tabControllers;
 
     public Stage getPrimaryStage() {
         return primaryStage;
@@ -29,6 +33,8 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        tabControllers = new HashMap<Tab, AbstractController>();
+
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Wendy's riding stable");
 
@@ -51,6 +57,16 @@ public class MainApplication extends Application {
         initTabs();
     }
 
+    @Override
+    public void Query(String query) {
+        TabPane tabPane = (TabPane)mainLayout.lookup("#tabPane");
+
+        Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+
+        AbstractController controller = tabControllers.get(selectedTab);
+
+    }
+
     public void initRootLayout() {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -68,6 +84,7 @@ public class MainApplication extends Application {
     }
 
     public void initTabs() throws Exception {
+
         TabPane tabPane = (TabPane)mainLayout.lookup("#tabPane");
 
         for (Tab tab : tabPane.getTabs()) {
@@ -80,6 +97,9 @@ public class MainApplication extends Application {
             tab.setContent(content);
 
             AbstractController controller = loader.getController();
+
+            tabControllers.put(tab,controller);
+
             controller.setMainApplication(this);
             controller.setService(service);
         }

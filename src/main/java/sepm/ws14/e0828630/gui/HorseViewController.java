@@ -57,6 +57,11 @@ public class HorseViewController extends AbstractController {
                 (observable, oldValue, newValue) -> showHorseDetails(newValue));
     }
 
+    @Override
+    public void Query(String query) {
+
+    }
+
     private void showHorseDetails(Horse horse) {
 
         if (horse != null) {

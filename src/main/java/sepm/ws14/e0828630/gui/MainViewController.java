@@ -5,7 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 
-public class MainViewController extends AbstractController {
+
+
+public class MainViewController {
 
     @FXML
     private Label searchHelpLabel;
@@ -15,16 +17,24 @@ public class MainViewController extends AbstractController {
 
     @FXML
     private void initialize() {
-
+        searchTextField.textProperty().addListener(
+                (observable, oldValue, newValue) -> search(newValue));
 
         Tooltip tt = new Tooltip();
         tt.setText("a really helpful search tooltip");
         searchHelpLabel.setTooltip(tt);
     }
 
+    private IQuery listener;
+
+    public void setQueryListener(IQuery listener) {
+        searchTextField.textProperty().addListener(
+                (observable, oldValue, newValue) -> listener.Query(newValue));
+    }
+
     @FXML
-    private void textChanged() {
-        System.out.print(searchTextField.getText());
+    private void search(String query) {
+
     }
 
 }
