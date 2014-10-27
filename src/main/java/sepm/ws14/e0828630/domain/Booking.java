@@ -1,27 +1,26 @@
 package sepm.ws14.e0828630.domain;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
+import java.time.LocalDateTime;
 
 public class Booking extends DomainObject {
 
-    private DateTime from;
-    private DateTime to;
-    private DateTime created;
-    private DateTime lastChanged;
+    private LocalDateTime from;
+    private LocalDateTime to;
+    private LocalDateTime created;
+    private LocalDateTime lastChanged;
     private int horseId;
     private int customerId;
     private boolean isCanceled;
 
 
-    public Booking(DateTime from, DateTime to, int horseId, int customerId) {
+    public Booking(LocalDateTime from, LocalDateTime to, int horseId, int customerId) {
         this.from = from;
         this.to = to;
         this.horseId = horseId;
         this.customerId = customerId;
     }
 
-    public Booking(int id, DateTime from, DateTime to, int horseId, int customerId, DateTime created, DateTime lastChanged, boolean isCanceled) {
+    public Booking(int id, LocalDateTime from, LocalDateTime to, int horseId, int customerId, LocalDateTime created, LocalDateTime lastChanged, boolean isCanceled) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -40,19 +39,19 @@ public class Booking extends DomainObject {
         this.isCanceled = isCanceled;
     }
 
-    public DateTime getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(DateTime created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
-    public DateTime getLastChanged() {
+    public LocalDateTime getLastChanged() {
         return lastChanged;
     }
 
-    public void setLastChanged(DateTime lastChanged) {
+    public void setLastChanged(LocalDateTime lastChanged) {
         this.lastChanged = lastChanged;
     }
 
@@ -64,19 +63,19 @@ public class Booking extends DomainObject {
         this.customerId = customerId;
     }
 
-    public DateTime getFrom() {
+    public LocalDateTime getFrom() {
         return from;
     }
 
-    public void setFrom(DateTime from) {
+    public void setFrom(LocalDateTime from) {
         this.from = from;
     }
 
-    public DateTime getTo() {
+    public LocalDateTime getTo() {
         return to;
     }
 
-    public void setTo(DateTime to) {
+    public void setTo(LocalDateTime to) {
         this.to = to;
     }
 
@@ -88,7 +87,7 @@ public class Booking extends DomainObject {
         this.horseId = horseId;
     }
 
-    public boolean isEditable() {
-        return Days.daysBetween(DateTime.now(), from ).getDays() > 14 && !isCanceled;
-    }
+//    public boolean isEditable() {
+//        return LocalTime..daysBetween(LocalTime.now(), from ).getDays() > 14 && !isCanceled;
+//    }
 }

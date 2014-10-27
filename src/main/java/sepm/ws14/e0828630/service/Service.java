@@ -1,6 +1,5 @@
 package sepm.ws14.e0828630.service;
 
-import org.joda.time.DateTime;
 import sepm.ws14.e0828630.dao.DAOException;
 import sepm.ws14.e0828630.dao.IDao;
 import sepm.ws14.e0828630.domain.Booking;
@@ -70,8 +69,8 @@ public class Service implements IService {
         if (h.getName() == null || h.getName().isEmpty())
             throw new ServiceException("Name mustn't be empty");
 
-        if (h.getBirthDate().isAfter(DateTime.now()))
-            throw new ServiceException("Birthdate can't be in the future");
+        // todo if (h.getBirthDate().isAfter(DateTime.now()))
+        // throw new ServiceException("Birthdate can't be in the future");
 
         try {
             horseDao.update(h);
@@ -130,8 +129,8 @@ public class Service implements IService {
 
     @Override
     public void createBooking(Booking b) throws ServiceException {
-        if (b.getFrom().isAfter(b.getTo()))
-            throw new ServiceException("'From' has to before 'to");
+    //    if (b.getFrom().isAfter(b.getTo()))
+    //        throw new ServiceException("'From' has to before 'to");
 
         if (b.getCustomerId() == 0)
             throw new ServiceException("Customer is not set");
@@ -148,8 +147,8 @@ public class Service implements IService {
 
     @Override
     public void deleteBooking(Booking b) throws ServiceException {
-        if (!b.isEditable())
-            throw new ServiceException("A booking can't be deleted within the last two weeks.");
+     //  todo if (!b.isEditable())
+       //     throw new ServiceException("A booking can't be deleted within the last two weeks.");
 
         try {
             bookingDao.delete(b);
@@ -160,11 +159,11 @@ public class Service implements IService {
 
     @Override
     public void updateBooking(Booking b) throws ServiceException {
-        if (!b.isEditable())
-            throw new ServiceException("Can't change booking details within the last two weeks.");
+       // if (!b.isEditable())
+       // todo     throw new ServiceException("Can't change booking details within the last two weeks.");
 
-        if (b.getFrom().isAfter(b.getTo()))
-            throw new ServiceException("'From' has to before 'to");
+     //   if (b.getFrom().isAfter(b.getTo()))
+       //     throw new ServiceException("'From' has to before 'to");
 
         try {
             bookingDao.update(b);

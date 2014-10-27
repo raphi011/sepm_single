@@ -1,17 +1,14 @@
 package sepm.ws14.e0828630.dao;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 import sepm.ws14.e0828630.domain.Booking;
 import sepm.ws14.e0828630.domain.Customer;
 import sepm.ws14.e0828630.domain.Horse;
 
-import java.sql.SQLException;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 
 public abstract class AbstractJdbcBookingDaoTest {
 
@@ -38,13 +35,13 @@ public abstract class AbstractJdbcBookingDaoTest {
 
     @Test
     public void createNew() throws DAOException {
-        Horse h = new Horse("Abel",DateTime.now(), 133, 180);
+        Horse h = new Horse("Abel", LocalDate.now(), 133, 180);
         Customer c = new Customer("Raphi");
 
         horseDao.create(h);
         customerDao.create(c);
 
-        Booking b = new Booking(DateTime.now(), DateTime.now(), h.getId(), c.getId() );
+        Booking b = new Booking(LocalDateTime.now(), LocalDateTime.now(), h.getId(), c.getId() );
 
         bookingDao.create(b);
 

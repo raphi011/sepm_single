@@ -1,11 +1,9 @@
 package sepm.ws14.e0828630.dao;
 
-import org.h2.jdbc.JdbcConnection;
-import org.joda.time.DateTime;
 import sepm.ws14.e0828630.domain.Booking;
-import sepm.ws14.e0828630.domain.Customer;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +24,8 @@ public class JdbcBookingDao implements IDao<Booking> {
             PreparedStatement s = con.prepareStatement("INSERT INTO Booking (\"From\",\"To\",Horse_HorseId,Customer_CustomerId) " +
                     "VALUES (?,?,?,?)");
 
-            s.setDate(1, new java.sql.Date(entity.getFrom().getMillis()));
-            s.setDate(2, new java.sql.Date(entity.getTo().getMillis()));
+            s.setDate(1, DateUtil.localTimeToDate(entity.getFrom()));
+            s.setDate(2, DateUtil.localTimeToDate(entity.getTo()));
             s.setDouble(3, entity.getHorseId());
             s.setInt(4, entity.getCustomerId());
 
@@ -57,12 +55,12 @@ public class JdbcBookingDao implements IDao<Booking> {
                 return null;
 
             Booking booking = new Booking(id,
-                    new DateTime(rs.getDate("From").getTime()),
-                    new DateTime(rs.getDate("To").getTime()),
+                    DateUtil.dateToLocalTime(rs.getDate("From")),
+                    DateUtil.dateToLocalTime(rs.getDate("To")),
                     rs.getInt("Horse_HorseId"),
                     rs.getInt("Customer_CustomerId"),
-                    new DateTime(rs.getDate("Created")),
-                    new DateTime(rs.getDate("LastChanged")),
+                    DateUtil.dateToLocalTime(rs.getDate("Created")),
+                    DateUtil.dateToLocalTime(rs.getDate("LastChanged")),
                     rs.getBoolean("IsCanceled"));
 
             s.close();
@@ -78,9 +76,9 @@ public class JdbcBookingDao implements IDao<Booking> {
 
         try {
             PreparedStatement s = con.prepareStatement("UPDATE Booking SET \"From\" = ?, \"To\" = ?, LastChanged = ?, Horse_HorseId = ?, Customer_CustomerId = ?, IsCanceled = ? WHERE BookingId = ?");
-            s.setDate(1, new java.sql.Date(entity.getFrom().getMillis()));
-            s.setDate(2, new java.sql.Date(entity.getTo().getMillis()));
-            s.setDate(3, new java.sql.Date(DateTime.now().getMillis()));
+            s.setDate(1, DateUtil.localTimeToDate(entity.getFrom()));
+            s.setDate(2, DateUtil.localTimeToDate(entity.getTo()));
+            s.setDate(3, DateUtil.localTimeToDate(LocalDateTime.now()));
             s.setInt(4, entity.getHorseId());
             s.setInt(5, entity.getCustomerId());
             s.setBoolean(6, entity.isCanceled());
