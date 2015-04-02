@@ -1,21 +1,33 @@
-
-
-public class Horse extends DomainObject {
+public class Horse {
 
     private String name;
+    private int horseId;
     private float maxSpeed;
     private float minSpeed;
     private boolean isDeleted;
     private byte[] image;
 
-    public Horse(int id, String name, float maxSpeed, float minSpeed, boolean isDeleted) {
-        super(id);
+    public Horse(int horseId, String name, float maxSpeed, float minSpeed, boolean isDeleted) {
+        this.horseId = horseId;
         this.name = name;
         this.maxSpeed = maxSpeed;
         this.minSpeed = minSpeed;
         this.isDeleted = isDeleted;
     }
 
+    public Horse(String name, float maxSpeed, float minSpeed) {
+        this.name = name;
+        this.maxSpeed = maxSpeed;
+        this.minSpeed = minSpeed;
+    }
+
+    public int getHorseId() {
+        return horseId;
+    }
+
+    public void setHorseId(int horseId) {
+        this.horseId = horseId;
+    }
 
     public String getName() {
         return name;

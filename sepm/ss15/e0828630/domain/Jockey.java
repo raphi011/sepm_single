@@ -1,18 +1,28 @@
 import java.util.Date;
 
-public class Jockey extends DomainObject {
+public class Jockey {
 
+
+    private int jockeyId;
     private String name;
     private float skill;
     private Date birthDate;
     private boolean isDeleted;
 
-    public Jockey(int id, String name, float skill, Date birthDate, boolean isDeleted) {
-        super(id);
+    public Jockey(int jockeyId, String name, float skill, Date birthDate, boolean isDeleted) {
+        this.jockeyId = jockeyId;
         this.name = name;
         this.skill = skill;
         this.birthDate = birthDate;
         this.isDeleted = isDeleted;
+    }
+
+    public int getJockeyId() {
+        return jockeyId;
+    }
+
+    public void setJockeyId(int jockeyId) {
+        this.jockeyId = jockeyId;
     }
 
     public boolean isDeleted() {

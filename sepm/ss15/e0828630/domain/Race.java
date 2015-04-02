@@ -1,6 +1,8 @@
 
-public class Race extends DomainObject {
+public class Race {
 
+
+    private int raceId;
     private int jockeyId;
     private int horseId;
     private float luck;
@@ -8,12 +10,20 @@ public class Race extends DomainObject {
     private int rank;
 
     public Race(int raceId, int jockeyId, int horseId, float luck, float speed, int rank) {
-        super(raceId);
+        this.raceId = raceId;
         this.jockeyId = jockeyId;
         this.horseId = horseId;
         this.luck = luck;
         this.speed = speed;
         this.rank = rank;
+    }
+
+    public int getRaceId() {
+        return raceId;
+    }
+
+    public void setRaceId(int raceId) {
+        this.raceId = raceId;
     }
 
     public int getJockeyId() {

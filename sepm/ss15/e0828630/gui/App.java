@@ -33,8 +33,5 @@ public class App extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
-
 }

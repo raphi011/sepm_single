@@ -3,13 +3,35 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcJockeyDao implements IDao<Jockey> {
+public class JdbcJockeyDao {
     //  private static final Logger log = LogManager.getLogger(JdbcJockeyDao.class);
 
     private Connection con;
 
+    private PreparedStatement createStatement;
+    private PreparedStatement readStatement;
+    private PreparedStatement updateStatement;
+    private PreparedStatement deleteStatement;
+    private PreparedStatement readAllStatement;
+
+
     public JdbcJockeyDao(Connection con) {
         this.con = con;
+
+        try {
+            createStatement = con.prepareStatement("INSERT INTO Jockey (Name, Skill, BirthDate) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+            readStatement = con.prepareStatement("SELECT Name, Skill, BirthDate, IsDeleted FROM Jockey WHERE IsDeleted = FALSE and JockeyId = ?");
+
+            updateStatement = con.prepareStatement("UPDATE Jockey SET Name = ?, Skill = ?, BirthDate = ?, IsDeleted = ? WHERE JockeyId = ?");
+
+            deleteStatement = con.prepareStatement("UPDATE Jockey SET IsDeleted = true WHERE JockeyId = ?");
+
+            readAllStatement =  con.prepareStatement("SELECT JockeyId FROM Jockey WHERE IsDeleted = false");
+
+        } catch (SQLException e) {
+            // log exception ...
+        }
     }
 
     public void create(Jockey entity) throws DAOException {
@@ -17,18 +39,18 @@ public class JdbcJockeyDao implements IDao<Jockey> {
             if (entity == null)
                 throw new IllegalArgumentException();
 
-            PreparedStatement s = con.prepareStatement("INSERT INTO Jockey (Name, Skill, BirthDate) VALUES (?, ?, ?)");
+            createStatement.clearParameters();
 
-            s.setString(1, entity.getName());
-            s.setFloat(2, entity.getSkill());
-            s.setDate(3, new java.sql.Date(entity.getBirthDate().getTime()));
-            s.executeUpdate();
+            createStatement.setString(1, entity.getName());
+            createStatement.setFloat(2, entity.getSkill());
+            createStatement.setDate(3, new java.sql.Date(entity.getBirthDate().getTime()));
+            createStatement.executeUpdate();
 
-            ResultSet rs = s.getGeneratedKeys();
+            ResultSet rs = createStatement.getGeneratedKeys();
             if (!rs.next())
                 throw new SQLException("insert hasn't returned a primary key");
 
-            entity.setId(rs.getInt(1));
+            entity.setJockeyId(rs.getInt(1));
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -36,9 +58,11 @@ public class JdbcJockeyDao implements IDao<Jockey> {
 
     public Jockey read(int id) throws DAOException {
         try {
-            Statement s = con.createStatement();
+            readStatement.clearParameters();
 
-            ResultSet rs = s.executeQuery("SELECT Name, Skill, BirthDate, IsDeleted FROM Jockey WHERE IsDeleted = FALSE and JockeyId = " + id);
+            readStatement.setInt(1,id);
+
+            ResultSet rs = readStatement.executeQuery();
 
             if (!rs.next())
                 return null;
@@ -49,7 +73,8 @@ public class JdbcJockeyDao implements IDao<Jockey> {
                     rs.getDate("Date"),
                     rs.getBoolean("IsDeleted"));
 
-            s.close();
+
+            rs.close();
 
             return jockey;
         } catch (SQLException e) {
@@ -59,14 +84,15 @@ public class JdbcJockeyDao implements IDao<Jockey> {
 
     public void update(Jockey entity) throws DAOException {
         try {
-            PreparedStatement s = con.prepareStatement("UPDATE Jockey SET Name = ?, Skill = ?, BirthDate = ?, IsDeleted = ? WHERE JockeyId = ?");
-            s.setString(1, entity.getName());
-            s.setFloat(2, entity.getSkill());
-            s.setDate(3, new java.sql.Date(entity.getBirthDate().getTime()));
-            s.setBoolean(4, entity.isDeleted());
-            s.setInt(5, entity.getId());
+            updateStatement.clearParameters();
 
-            s.executeUpdate();
+            updateStatement.setString(1, entity.getName());
+            updateStatement.setFloat(2, entity.getSkill());
+            updateStatement.setDate(3, new java.sql.Date(entity.getBirthDate().getTime()));
+            updateStatement.setBoolean(4, entity.isDeleted());
+            updateStatement.setInt(5, entity.getJockeyId());
+
+            updateStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -74,9 +100,10 @@ public class JdbcJockeyDao implements IDao<Jockey> {
 
     public void delete(Jockey entity) throws DAOException {
         try {
-            Statement s = con.createStatement();
+            deleteStatement.clearParameters();
 
-            s.executeUpdate("UPDATE Jockey SET IsDeleted = true WHERE JockeyId = " + entity.getId());
+            deleteStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -106,9 +133,8 @@ public class JdbcJockeyDao implements IDao<Jockey> {
 
     public List<Jockey> readAll() throws DAOException {
         try {
-            Statement s = con.createStatement();
 
-            ResultSet rs = s.executeQuery("SELECT JockeyId FROM Jockey");
+            ResultSet rs = readAllStatement.executeQuery();
 
             ArrayList<Jockey> list = new ArrayList<Jockey>();
 
@@ -116,7 +142,7 @@ public class JdbcJockeyDao implements IDao<Jockey> {
                 list.add(read(rs.getInt("JockeyId")));
             }
 
-            s.close();
+            rs.close();
 
             return list;
         } catch (SQLException e) {

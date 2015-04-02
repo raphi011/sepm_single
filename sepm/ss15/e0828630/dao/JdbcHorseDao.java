@@ -5,36 +5,59 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcHorseDao implements IDao<Horse> {
-  //  private static final Logger log = LogManager.getLogger(JdbcJockeyDao.class);
+public class JdbcHorseDao implements HorseDao {
+    //private static final Logger log = LogManager.getLogger(JdbcHorseDao.class);
 
     private Connection con;
+    private PreparedStatement createStatement;
+    private PreparedStatement readStatement;
+    private PreparedStatement updateStatement;
+    private PreparedStatement deleteStatement;
+    private PreparedStatement readAllStatement;
 
     public JdbcHorseDao(Connection con) {
         this.con = con;
-    }
 
+        try {
+           createStatement = con.prepareStatement("INSERT INTO Horse (Name, MaxSpeed, MinSpeed, Image)" +
+                    "VALUES (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+
+            readStatement = con.prepareStatement("SELECT Name, MaxSpeed, MinSpeed, Image, IsDeleted FROM Horse WHERE IsDeleted = FALSE and HorseId = ?");
+
+            updateStatement = con.prepareStatement("UPDATE Horse SET Name = ?, MaxSpeed = ?, MinSpeed = ?, Image = ? WHERE HorseId = ?");
+
+            deleteStatement = con.prepareStatement("UPDATE Horse SET IsDeleted = true WHERE HorseId = ?");
+
+            readAllStatement =  con.prepareStatement("SELECT HorseId FROM Horse WHERE IsDeleted = false");
+
+
+        } catch (SQLException e) {
+            // log exception ...
+        }
+    }
 
     public void create(Horse entity) throws DAOException {
         try {
             if (entity == null)
                 throw new IllegalArgumentException();
 
-            PreparedStatement s = con.prepareStatement("INSERT INTO Horse (Name, MaxSpeed, MinSpeed, Image)" +
-                    "VALUES (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            createStatement.clearParameters();
 
-            s.setString(1, entity.getName());
-            s.setFloat(2, entity.getMinSpeed());
-            s.setFloat(3, entity.getMaxSpeed());
-            s.setBlob(4, new ByteArrayInputStream(entity.getImage()));
+            createStatement.setString(1, entity.getName());
+            createStatement.setFloat(2, entity.getMinSpeed());
+            createStatement.setFloat(3, entity.getMaxSpeed());
+            createStatement.setBlob(4, new ByteArrayInputStream(entity.getImage()));
 
-            s.executeUpdate();
+            createStatement.executeUpdate();
 
-            ResultSet rs = s.getGeneratedKeys();
+            ResultSet rs = createStatement.getGeneratedKeys();
             if (!rs.next())
                 throw new SQLException("insert hasn't returned a primary key");
 
-            entity.setId(rs.getInt(1));
+            entity.setHorseId(rs.getInt(1));
+
+            rs.close();
+
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -42,9 +65,11 @@ public class JdbcHorseDao implements IDao<Horse> {
 
     public Horse read(int id) throws DAOException {
         try {
-            Statement s = con.createStatement();
+            readStatement.clearParameters();
 
-            ResultSet rs = s.executeQuery("SELECT Name, MaxSpeed, MinSpeed, Image, IsDeleted FROM Horse WHERE IsDeleted = FALSE and HorseId = " + id);
+            readStatement.setInt(1,id);
+
+            ResultSet rs = readStatement.executeQuery();
 
             if (!rs.next())
                 return null;
@@ -63,7 +88,7 @@ public class JdbcHorseDao implements IDao<Horse> {
                 horse.setImage(imageBlob.getBytes(0, (int) imageBlob.length()));
             }
 
-            s.close();
+            rs.close();
 
             return horse;
         } catch (SQLException e) {
@@ -74,25 +99,28 @@ public class JdbcHorseDao implements IDao<Horse> {
     public void update(Horse entity)  throws DAOException{
 
         try {
-            PreparedStatement s = con.prepareStatement("UPDATE Horse SET Name = ?, MaxSpeed = ?, MinSpeed = ?, Image = ? WHERE HorseId = ?");
+            updateStatement.clearParameters();
 
-            s.setString(1, entity.getName());
-            s.setFloat(2, entity.getMaxSpeed());
-            s.setFloat(3, entity.getMinSpeed());
-            s.setBinaryStream(4, new ByteArrayInputStream(entity.getImage()));
-            s.setInt(5, entity.getId());
+            updateStatement.setString(1, entity.getName());
+            updateStatement.setFloat(2, entity.getMaxSpeed());
+            updateStatement.setFloat(3, entity.getMinSpeed());
+            updateStatement.setBinaryStream(4, new ByteArrayInputStream(entity.getImage()));
+            updateStatement.setInt(5, entity.getHorseId());
 
-            s.execute();
+            updateStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException(e);
         }
     }
 
-    public void delete(Horse entity)  throws DAOException {
+    public void delete(int id) throws DAOException {
         try {
-            Statement s = con.createStatement();
+            deleteStatement.clearParameters();
 
-            s.executeUpdate("UPDATE Horse SET IsDeleted = true WHERE HorseId = " + entity.getId());
+            deleteStatement.setInt(1, id);
+
+            deleteStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -122,9 +150,7 @@ public class JdbcHorseDao implements IDao<Horse> {
 
     public List<Horse> readAll() throws DAOException {
         try {
-            Statement s = con.createStatement();
-
-            ResultSet rs = s.executeQuery("SELECT HorseId FROM Horse WHERE IsDeleted = false");
+            ResultSet rs = readAllStatement.executeQuery();
 
             ArrayList<Horse> list = new ArrayList<Horse>();
 
@@ -132,7 +158,7 @@ public class JdbcHorseDao implements IDao<Horse> {
                 list.add(read(rs.getInt("HorseId")));
             }
 
-            s.close();
+            rs.close();
 
             return list;
         } catch (SQLException e) {
