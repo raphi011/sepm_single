@@ -55,8 +55,9 @@ public abstract class AbstractJdbcHorseDaoTest {
     public void search() throws DAOException {
         Horse h = new Horse("Abel der Vierte", 51, 60);
 
+
         horseDao.create(h);
 
-        assertNotEquals("No search results found", 0, horseDao.search("abel").size());
+        assertNotEquals("No search results found", 0, horseDao.search("%abel%").size());
     }
 }

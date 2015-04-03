@@ -3,7 +3,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcJockeyDao {
+public class JdbcJockeyDao implements JockeyDao {
     //  private static final Logger log = LogManager.getLogger(JdbcJockeyDao.class);
 
     private Connection con;
@@ -98,10 +98,10 @@ public class JdbcJockeyDao {
         }
     }
 
-    public void delete(Jockey entity) throws DAOException {
+    public void delete(int id) throws DAOException {
         try {
             deleteStatement.clearParameters();
-
+            deleteStatement.setInt(1, id);
             deleteStatement.executeUpdate();
 
         } catch (SQLException e) {

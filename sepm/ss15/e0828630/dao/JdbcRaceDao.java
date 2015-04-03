@@ -12,6 +12,7 @@ public class JdbcRaceDao implements RaceDao {
     private PreparedStatement updateStatement;
     private PreparedStatement deleteStatement;
     private PreparedStatement readAllStatement;
+    private PreparedStatement raceIdStatement;
 
     public JdbcRaceDao(Connection con) {
 
@@ -26,6 +27,8 @@ public class JdbcRaceDao implements RaceDao {
             readAllStatement = con.prepareStatement("SELECT RaceId, JockeyId, HorseId, Luck, Speed, Rank FROM Race");
 
             deleteStatement = con.prepareStatement("DELETE FROM Race WHERE RaceId = ? and JockeyId = ? and HorseId = ?");
+
+            raceIdStatement = con.prepareStatement("CALL NEXT VALUE FOR SEQ_RACE");
 
         } catch (SQLException e) {
             // log exception ...
@@ -48,6 +51,20 @@ public class JdbcRaceDao implements RaceDao {
 
             createStatement.executeUpdate();
 
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    public int newRaceId() throws DAOException {
+        try {
+            //ResultSet rs = raceIdStatement.executeQuery();
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery("CALL NEXT VALUE FOR SEQ_RACE");
+            rs.next();
+            int newRaceId = rs.getInt(1);
+            rs.close();
+            return newRaceId;
         } catch (SQLException e) {
             throw new DAOException(e);
         }

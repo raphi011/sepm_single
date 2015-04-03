@@ -1,3 +1,5 @@
+import java.io.ByteArrayInputStream;
+
 public class Horse {
 
     private String name;
@@ -7,7 +9,7 @@ public class Horse {
     private boolean isDeleted;
     private byte[] image;
 
-    public Horse(int horseId, String name, float maxSpeed, float minSpeed, boolean isDeleted) {
+    public Horse(int horseId, String name, float minSpeed, float maxSpeed, boolean isDeleted) {
         this.horseId = horseId;
         this.name = name;
         this.maxSpeed = maxSpeed;
@@ -15,7 +17,7 @@ public class Horse {
         this.isDeleted = isDeleted;
     }
 
-    public Horse(String name, float maxSpeed, float minSpeed) {
+    public Horse(String name, float minSpeed, float maxSpeed) {
         this.name = name;
         this.maxSpeed = maxSpeed;
         this.minSpeed = minSpeed;
@@ -25,6 +27,11 @@ public class Horse {
         return horseId;
     }
 
+    public ByteArrayInputStream getImageStream() {
+        return image != null ?
+                new ByteArrayInputStream(image) :
+                null;
+    }
     public void setHorseId(int horseId) {
         this.horseId = horseId;
     }

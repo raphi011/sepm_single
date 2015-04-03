@@ -12,7 +12,6 @@ ALTER TABLE Horse ADD CHECK (MinSpeed <= MaxSpeed);
 CREATE TABLE Jockey (
 	JockeyId integer AUTO_INCREMENT PRIMARY KEY, 
 	Name varchar NOT NULL,
-	Skill real NOT NULL,
 	BirthDate date,
 	IsDeleted boolean NOT NULL DEFAULT false
 );
@@ -30,3 +29,20 @@ CREATE TABLE Race (
 );
 
 CREATE SEQUENCE Seq_Race;
+
+INSERT INTO Jockey (Name, BirthDate) VALUES ('Raphael', '1990-07-11');
+INSERT INTO Jockey (Name, BirthDate) VALUES ('Barbara', '1990-07-11');
+INSERT INTO Jockey (Name, BirthDate) VALUES ('Lisa', '1990-07-11');
+INSERT INTO Jockey (Name, BirthDate) VALUES ('Martin', '1990-07-11');
+
+INSERT INTO Horse (Name, MinSpeed, MaxSpeed) VALUES ('Abaccus', 60, 90);
+INSERT INTO Horse (Name, MinSpeed, MaxSpeed) VALUES ('Azur', 50, 51);
+INSERT INTO Horse (Name, MinSpeed, MaxSpeed) VALUES ('Kahli', 66, 85);
+INSERT INTO Horse (Name, MinSpeed, MaxSpeed) VALUES ('Sambuca', 80,95);
+
+INSERT INTO Race (RaceId, JockeyId, HorseId, Luck, Speed, Rank) VALUES (1, 1, 1, 0.95, 70, 8);
+INSERT INTO Race (RaceId, JockeyId, HorseId, Luck, Speed, Rank) VALUES (1, 2, 2, 0.95, 70, 8);
+INSERT INTO Race (RaceId, JockeyId, HorseId, Luck, Speed, Rank) VALUES (1, 3, 3, 0.95, 70, 8);
+INSERT INTO Race (RaceId, JockeyId, HorseId, Luck, Speed, Rank) VALUES (1, 4, 4, 0.95, 70, 8);
+INSERT INTO Race (RaceId, JockeyId, HorseId, Luck, Speed, Rank) VALUES (2, 1, 4, 0.95, 70, 8);
+INSERT INTO Race (RaceId, JockeyId, HorseId, Luck, Speed, Rank) VALUES (2, 2, 1, 0.95, 70, 8);
