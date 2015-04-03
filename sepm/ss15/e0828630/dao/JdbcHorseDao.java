@@ -1,6 +1,8 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JdbcHorseDao implements HorseDao {
     //private static final Logger log = LogManager.getLogger(JdbcHorseDao.class);
@@ -167,19 +169,20 @@ public class JdbcHorseDao implements HorseDao {
 //        }
 //    }
 
-    public List<Horse> readAll() throws DAOException {
+    public Map<Integer, Horse> readAll() throws DAOException {
         try {
             ResultSet rs = readAllStatement.executeQuery();
-
-            ArrayList<Horse> list = new ArrayList<Horse>();
+            Map<Integer,Horse> horses = new HashMap<Integer, Horse>();
 
             while (rs.next()) {
-                list.add(read(rs.getInt("HorseId")));
+                int horseId = rs.getInt("HorseId");
+
+                horses.put(horseId, read(horseId));
             }
 
             rs.close();
 
-            return list;
+            return horses;
         } catch (SQLException e) {
             throw new DAOException(e);
         }

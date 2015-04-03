@@ -1,7 +1,9 @@
 import org.h2.fulltext.FullText;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JdbcJockeyDao implements JockeyDao {
     //  private static final Logger log = LogManager.getLogger(JdbcJockeyDao.class);
@@ -131,20 +133,20 @@ public class JdbcJockeyDao implements JockeyDao {
         }
     }
 
-    public List<Jockey> readAll() throws DAOException {
+    public Map<Integer,Jockey> readAll() throws DAOException {
         try {
+            Map<Integer, Jockey> jockeys = new HashMap<Integer,Jockey>();
 
             ResultSet rs = readAllStatement.executeQuery();
 
-            ArrayList<Jockey> list = new ArrayList<Jockey>();
-
             while (rs.next()) {
-                list.add(read(rs.getInt("JockeyId")));
+                int jockeyId = rs.getInt("JockeyId");
+                jockeys.put(jockeyId, read(jockeyId));
             }
 
             rs.close();
 
-            return list;
+            return jockeys;
         } catch (SQLException e) {
             throw new DAOException(e);
         }

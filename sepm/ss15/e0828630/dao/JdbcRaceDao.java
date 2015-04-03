@@ -10,7 +10,8 @@ public class JdbcRaceDao implements RaceDao {
     private PreparedStatement createStatement;
     private PreparedStatement readStatement;
     private PreparedStatement updateStatement;
-    private PreparedStatement deleteStatement;
+    private PreparedStatement deleteRaceStatement;
+    private PreparedStatement deleteRaceParticipantStatement;
     private PreparedStatement readAllStatement;
     private PreparedStatement raceIdStatement;
 
@@ -26,7 +27,9 @@ public class JdbcRaceDao implements RaceDao {
 
             readAllStatement = con.prepareStatement("SELECT RaceId, JockeyId, HorseId, Luck, Speed, Rank FROM Race");
 
-            deleteStatement = con.prepareStatement("DELETE FROM Race WHERE RaceId = ? and JockeyId = ? and HorseId = ?");
+            deleteRaceParticipantStatement = con.prepareStatement("DELETE FROM Race WHERE RaceId = ? and JockeyId = ? and HorseId = ?");
+
+            deleteRaceStatement = con.prepareStatement("DELETE FROM Race WHERE RaceId = ?");
 
             raceIdStatement = con.prepareStatement("CALL NEXT VALUE FOR SEQ_RACE");
 
@@ -131,11 +134,27 @@ public class JdbcRaceDao implements RaceDao {
             throw new DAOException("Can't update race entries");
     }
 
-    public void delete(int id) throws DAOException {
+    public void deleteRace(int raceId) throws DAOException {
         try {
-            deleteStatement.clearParameters();
+            deleteRaceStatement.clearParameters();
 
-            deleteStatement.setInt(1, id);
+            deleteRaceStatement.setInt(1, raceId);
+
+            deleteRaceStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    public void deleteRaceParticipant(Race race) throws DAOException {
+        try {
+            deleteRaceParticipantStatement.clearParameters();
+
+            deleteRaceParticipantStatement.setInt(1, race.getRaceId());
+            deleteRaceParticipantStatement.setInt(2, race.getJockeyId());
+            deleteRaceParticipantStatement.setInt(1, race.getHorseId());
+
+            deleteRaceParticipantStatement.executeUpdate();
 
 
         } catch (SQLException e) {
@@ -146,6 +165,5 @@ public class JdbcRaceDao implements RaceDao {
     public List<Race> search(int jockeyId, int raceId, int horseId) throws DAOException {
         throw new DAOException("Race search not implemented yet");
     }
-
 
 }

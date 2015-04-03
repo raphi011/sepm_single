@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.*;
 
 public class Service implements IService {
 
@@ -6,19 +6,19 @@ public class Service implements IService {
     private JockeyDao jockeyDao;
     private HorseDao horseDao;
 
-    private List<Horse> horseList;
-    private List<Race> raceList;
-    private List<Jockey> jockeyList;
+    private Collection<Horse> horseList;
+    private Collection<Race> raceList;
+    private Collection<Jockey> jockeyList;
 
-    public List<Horse> getHorseList() {
+    public Collection<Horse> getHorseList() {
         return horseList;
     }
 
-    public List<Jockey> getJockeyList() {
+    public Collection<Jockey> getJockeyList() {
         return jockeyList;
     }
 
-    public List<Race> getRaceList() {
+    public Collection<Race> getRaceList() {
         return raceList;
     }
 
@@ -26,6 +26,60 @@ public class Service implements IService {
         this.horseDao = horseDao;
         this.raceDao = raceDao;
         this.jockeyDao = jockeyDao;
+    }
+
+    public void initialize() throws ServiceException {
+        Map<Integer, Horse> horses = getAllHorses();
+        Map<Integer, Jockey> jockeys = getAllJockeys();
+        raceList = getAllRaces();
+
+        for (Race r : raceList) {
+            r.setHorse(horses.get(r.getHorse()));
+            r.setJockey(jockeys.get(r.getJockeyId()));
+        }
+
+        horseList = horses.values();
+        jockeyList = jockeys.values();
+    }
+
+    private float averageSpeed(Race raceParticipant) {
+        float jockeySkill = raceParticipant.getJockey().getSkill();
+        float minSpeed = raceParticipant.getHorse().getMinSpeed();
+        float maxSpeed = raceParticipant.getHorse().getMaxSpeed();
+
+        Random rnd = new Random();
+
+        double skill = 1 + (0.15 * 1/Math.PI * Math.atan(1/5*jockeySkill));
+
+        double speed = minSpeed + (rnd.nextFloat() % (maxSpeed-minSpeed));
+
+        double luck = 0.95 + (rnd.nextFloat() % 0.10);
+
+        return (float)(speed * skill * luck);
+    }
+
+    public void doRaceSimulation(Collection<Race> raceParticipants) throws ServiceException {
+
+        SortedSet<Race> results = new TreeSet<Race>();
+
+        for (Race r : raceParticipants) {
+            float averageSpeed = averageSpeed(r);
+            r.setSpeed(averageSpeed);
+            results.add(r);
+        }
+
+        try {
+            int rank = 1;
+
+            // todo: make sure iteration order is ascending!
+            for (Race r : results) {
+                r.setRank(rank++);
+                raceDao.create(r);
+                raceList.add(r);
+            }
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        }
     }
 
     public void createJockey(Jockey jockey) throws ServiceException {
@@ -38,15 +92,17 @@ public class Service implements IService {
 
         try {
             jockeyDao.create(jockey);
+            jockeyList.add(jockey);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
     }
 
-    public void deleteJockey(Jockey jockey) throws ServiceException {
+     public void deleteJockey(Jockey jockey) throws ServiceException {
         if (jockey.getJockeyId() != 0) {
             try {
                 jockeyDao.delete(jockey.getJockeyId());
+                jockeyList.remove(jockey);
             } catch (DAOException e) {
                 throw new ServiceException(e);
             }
@@ -66,9 +122,10 @@ public class Service implements IService {
         }
     }
 
-    public void getAllJockeys() throws ServiceException {
+    private Map<Integer, Jockey> getAllJockeys() throws ServiceException {
         try {
-            jockeyList = jockeyDao.readAll();
+            return jockeyDao.readAll();
+
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -100,72 +157,19 @@ public class Service implements IService {
             throw new ServiceException(e);
         }
     }
-/*
 
-    public void deleteRaceParticipant(Race race) throws ServiceException {
-
-
-
+    private List<Race> getRaceParticipants(int raceId) throws ServiceException {
         try {
-            bookingDao.delete(b);
+            return raceDao.read(raceId);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
     }
 
-    public void updateRace(Race race) throws ServiceException {
-
-    }
-
-    public void getAllRaces() throws ServiceException {
-
-    }
-
-    public void createBooking(Booking b) throws ServiceException {
-        //    if (b.getFrom().isAfter(b.getTo()))
-        //        throw new ServiceException("'From' has to before 'to");
-
-        if (b.getCustomerId() == 0)
-            throw new ServiceException("Customer is not set");
-
-        if (b.getHorseId() == 0)
-            throw new ServiceException("Horse is not set");
+    public Collection<Race> getAllRaces() throws ServiceException {
 
         try {
-            bookingDao.create(b);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    public void deleteBooking(Booking b) throws ServiceException {
-        //  todo if (!b.isEditable())
-        //     throw new ServiceException("A booking can't be deleted within the last two weeks.");
-
-        try {
-            bookingDao.delete(b);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    public void updateBooking(Booking b) throws ServiceException {
-        // if (!b.isEditable())
-        // todo     throw new ServiceException("Can't change booking details within the last two weeks.");
-
-        //   if (b.getFrom().isAfter(b.getTo()))
-        //     throw new ServiceException("'From' has to before 'to");
-
-        try {
-            bookingDao.update(b);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    public void getAllBookings() throws ServiceException {
-        try {
-            bookingDao.readAll();
+            return raceDao.readAll();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -175,35 +179,6 @@ public class Service implements IService {
         if (h.getName() == null || h.getName().isEmpty())
             throw new ServiceException("Name mustn't be empty");
 
-        if (h.getHorseId() != 0)
-            throw new ServiceException("Horse with id " + h.getHorseId() + " already exists");
-
-        try {
-            horseDao.create(h);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    public void deleteHorse(Horse h) throws ServiceException {
-        if (h.getHorseId() == 0)
-            throw new ServiceException("Horse doesn't exist yet.");
-
-        try {
-            horseDao.delete(h.getHorseId());
-            horseList.remove(h);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
-    }
-
-    public void updateHorse(Horse h) throws ServiceException {
-        if (h.getName() == null || h.getName().isEmpty())
-            throw new ServiceException("Name mustn't be empty");
-
-        // todo if (h.getBirthDate().isAfter(DateTime.now()))
-        // throw new ServiceException("Birthdate can't be in the future");
-
         try {
             horseDao.update(h);
         } catch (DAOException e) {
@@ -211,48 +186,29 @@ public class Service implements IService {
         }
     }
 
-    public void getAllHorses() throws ServiceException {
+    public void deleteHorse(Horse h) throws ServiceException {
+
         try {
-            horseList = horseDao.readAll();
+            horseDao.delete(h.getHorseId());
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
     }
 
-    public void createCustomer(Customer c) throws ServiceException {
-        if (c.getName() == null || c.getName().isEmpty())
-            throw new ServiceException("Name mustn't be empty.");
-    }
-
-    public void deleteCustomer(Customer c) throws ServiceException {
-        if (c.getId() == 0)
-            throw new ServiceException("Customer doesn't exist yet.");
-
+    public void updateHorse(Horse h) throws ServiceException {
         try {
-            customerDao.delete(c);
+            horseDao.update(h);
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
     }
 
-    public void updateCustomer(Customer c) throws ServiceException {
-        if (c.getName() == null || c.getName().isEmpty())
-            throw new ServiceException("Name mustn't be empty.");
+    private Map<Integer,Horse> getAllHorses() throws ServiceException {
 
         try {
-            customerDao.update(c);
+            return horseDao.readAll();
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
     }
-
-    public void getAllCustomers() throws ServiceException {
-        try {
-            customerDao.readAll();
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
-    }*/
-
-
 }

@@ -1,13 +1,16 @@
 
-public class Race {
+public class Race implements Comparable<Race> {
 
 
     private int raceId;
     private int jockeyId;
+    private Jockey jockey;
     private int horseId;
+    private Horse horse;
     private float luck;
     private float speed;
     private int rank;
+
 
     public Race(int raceId, int jockeyId, int horseId, float luck, float speed, int rank) {
         this.raceId = raceId;
@@ -16,6 +19,22 @@ public class Race {
         this.luck = luck;
         this.speed = speed;
         this.rank = rank;
+    }
+
+    public Jockey getJockey() {
+        return jockey;
+    }
+
+    public void setJockey(Jockey jockey) {
+        this.jockey = jockey;
+    }
+
+    public Horse getHorse() {
+        return horse;
+    }
+
+    public void setHorse(Horse horse) {
+        this.horse = horse;
     }
 
     public int getRaceId() {
@@ -64,5 +83,15 @@ public class Race {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    public int compareTo(Race o) {
+        if (this.getSpeed() < o.getSpeed()) {
+            return -1;
+        } else if (this.getSpeed() > o.getSpeed()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
