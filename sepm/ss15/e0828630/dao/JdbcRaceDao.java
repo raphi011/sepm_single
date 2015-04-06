@@ -105,9 +105,7 @@ public class JdbcRaceDao implements RaceDao {
     public List<Race> readAll() throws DAOException {
         try {
 
-            readAllStatement.clearParameters();
-
-            ResultSet rs = readStatement.executeQuery();
+            ResultSet rs = readAllStatement.executeQuery();
 
             ArrayList<Race> list = new ArrayList<Race>();
 

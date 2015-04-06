@@ -1,3 +1,6 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -5,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class JdbcHorseDao implements HorseDao {
-    //private static final Logger log = LogManager.getLogger(JdbcHorseDao.class);
+    private static final Logger log = LogManager.getLogger(JdbcHorseDao.class);
 
     private Connection con;
     private PreparedStatement createStatement;
@@ -34,6 +37,7 @@ public class JdbcHorseDao implements HorseDao {
 
 
         } catch (SQLException e) {
+            log.error("HorseDao prepared statements failed.");
             // log exception ...
         }
     }

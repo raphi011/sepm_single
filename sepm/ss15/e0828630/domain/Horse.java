@@ -75,4 +75,9 @@ public class Horse {
     public void setImage(byte[] image) {
         this.image = image;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

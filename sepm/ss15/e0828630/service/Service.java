@@ -38,8 +38,8 @@ public class Service implements IService {
             r.setJockey(jockeys.get(r.getJockeyId()));
         }
 
-        horseList = horses.values();
-        jockeyList = jockeys.values();
+        horseList = new LinkedList<Horse>(horses.values());
+        jockeyList = new LinkedList<Jockey>(jockeys.values());
     }
 
     private float averageSpeed(Race raceParticipant) {

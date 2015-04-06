@@ -1,3 +1,5 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.h2.fulltext.FullText;
 import java.sql.*;
 import java.util.ArrayList;
@@ -6,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class JdbcJockeyDao implements JockeyDao {
-    //  private static final Logger log = LogManager.getLogger(JdbcJockeyDao.class);
+    private static final Logger log = LogManager.getLogger(JdbcJockeyDao.class);
 
     private Connection con;
 
@@ -32,7 +34,7 @@ public class JdbcJockeyDao implements JockeyDao {
             readAllStatement =  con.prepareStatement("SELECT JockeyId FROM Jockey WHERE IsDeleted = false");
 
         } catch (SQLException e) {
-            // log exception ...
+            log.error("HorseDao prepared statements failed.");
         }
     }
 
@@ -72,7 +74,7 @@ public class JdbcJockeyDao implements JockeyDao {
             Jockey jockey = new Jockey(id,
                     rs.getString("Name"),
                     rs.getFloat("Skill"),
-                    rs.getDate("Date"),
+                    rs.getDate("BirthDate"),
                     rs.getBoolean("IsDeleted"));
 
 
