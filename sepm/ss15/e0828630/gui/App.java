@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
@@ -82,7 +83,7 @@ public class App extends Application implements IQuery {
 
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/" + id + "View.fxml"));
-            AnchorPane content = loader.load();
+            SplitPane content = loader.load();
 
             tab.setContent(content);
 
