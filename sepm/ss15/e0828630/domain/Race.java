@@ -1,19 +1,48 @@
 
-public class Race extends DomainObject {
+public class Race implements Comparable<Race> {
 
+
+    private int raceId;
     private int jockeyId;
+    private Jockey jockey;
     private int horseId;
+    private Horse horse;
     private float luck;
     private float speed;
     private int rank;
 
+
     public Race(int raceId, int jockeyId, int horseId, float luck, float speed, int rank) {
-        super(raceId);
+        this.raceId = raceId;
         this.jockeyId = jockeyId;
         this.horseId = horseId;
         this.luck = luck;
         this.speed = speed;
         this.rank = rank;
+    }
+
+    public Jockey getJockey() {
+        return jockey;
+    }
+
+    public void setJockey(Jockey jockey) {
+        this.jockey = jockey;
+    }
+
+    public Horse getHorse() {
+        return horse;
+    }
+
+    public void setHorse(Horse horse) {
+        this.horse = horse;
+    }
+
+    public int getRaceId() {
+        return raceId;
+    }
+
+    public void setRaceId(int raceId) {
+        this.raceId = raceId;
     }
 
     public int getJockeyId() {
@@ -54,5 +83,15 @@ public class Race extends DomainObject {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    public int compareTo(Race o) {
+        if (this.getSpeed() < o.getSpeed()) {
+            return -1;
+        } else if (this.getSpeed() > o.getSpeed()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
