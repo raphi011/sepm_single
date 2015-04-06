@@ -13,6 +13,7 @@ CREATE TABLE Jockey (
 	JockeyId integer AUTO_INCREMENT PRIMARY KEY, 
 	Name varchar NOT NULL,
 	BirthDate date,
+	Skill float,
 	IsDeleted boolean NOT NULL DEFAULT false
 );
 
@@ -30,10 +31,10 @@ CREATE TABLE Race (
 
 CREATE SEQUENCE Seq_Race;
 
-INSERT INTO Jockey (Name, BirthDate) VALUES ('Raphael', '1990-07-11');
-INSERT INTO Jockey (Name, BirthDate) VALUES ('Barbara', '1990-07-11');
-INSERT INTO Jockey (Name, BirthDate) VALUES ('Lisa', '1990-07-11');
-INSERT INTO Jockey (Name, BirthDate) VALUES ('Martin', '1990-07-11');
+INSERT INTO Jockey (Name, BirthDate,Skill) VALUES ('Raphael', '1990-07-11', 50);
+INSERT INTO Jockey (Name, BirthDate,Skill) VALUES ('Barbara', '1990-07-11',100);
+INSERT INTO Jockey (Name, BirthDate,Skill) VALUES ('Lisa', '1990-07-11',80.5);
+INSERT INTO Jockey (Name, BirthDate,Skill) VALUES ('Martin', '1990-07-11',30.9);
 
 INSERT INTO Horse (Name, MinSpeed, MaxSpeed) VALUES ('Abaccus', 60, 90);
 INSERT INTO Horse (Name, MinSpeed, MaxSpeed) VALUES ('Azur', 50, 51);

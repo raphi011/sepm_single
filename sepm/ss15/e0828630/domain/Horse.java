@@ -56,4 +56,9 @@ public class Horse extends DomainObject {
     public void setImage(byte[] image) {
         this.image = image;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

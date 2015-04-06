@@ -1,3 +1,4 @@
+import java.util.Collection;
 import java.util.List;
 
 public interface RaceDao {
@@ -5,7 +6,6 @@ public interface RaceDao {
     int newRaceId() throws DAOException;
     List<Race> read(int id) throws DAOException;
     void update(Race race) throws DAOException;
-    void delete(int id) throws DAOException;
     List<Race> search(int jockeyId, int raceId, int horseId) throws DAOException;
-    List<Race> readAll() throws DAOException;
+    Collection<Race> readAll() throws DAOException;
 }
